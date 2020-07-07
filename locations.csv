@@ -1,5 +1,5 @@
-﻿address,latitude,longitude,name,businessOwner
-7100 W 38th Ave,39.76915136,-105.0764377,Right Coast Pizza,Mark Esqual
-7060 W 38th Ave,39.76907815,-105.0759295,A1 Rentals,Steve Something
-7085 W 38th Ave,39.76961116,-105.0760508,Wheat Ridge Cyclery,Uhh
-7057 W 38th Ave,39.76960733,-105.0757484,Fran's Cafe,Hmm
+﻿address,latitude,longitude,name,businessOwner,type
+7100 W 38th Ave,39.76915136,-105.0764377,Right Coast Pizza,Mark Esqual,restaurant
+7060 W 38th Ave,39.76907815,-105.0759295,A1 Rentals,Steve Something,hardware
+7085 W 38th Ave,39.76961116,-105.0760508,Wheat Ridge Cyclery,Uhh,recreation
+7057 W 38th Ave,39.76960733,-105.0757484,Fran's Cafe,Hmm,restaurant
