@@ -86,7 +86,7 @@
   var a = [anim, auto, chu, cof, ent, fit, groc, heal, hosp, laun, liq, med, medl, pre, prof, rest, resb, ret, sal, sale, lea, sub];
   var c = ["Animal", "Auto", "Church", "Coffee", "Entertainment", "Fitness", "Grocery", "Health", "Hospital", "Laundromat", "Liquor", "Media", "Medical", "Preschool", "Professional", "Restaurant", "Restaurant/Brewpub", "Retail", "Salon", "Sale", "Lease", "Sublease"];
 
-  d3.csv("locations.csv") // finds the data csv at the listed location and imports it as an array
+  d3.csv("https://raw.githubusercontent.com/flanl3/WRBusinessMap/master/locations.csv") // finds the data csv at the listed location and imports it as an array
   .then(function(d)
   {
     for(var i = 0; i < d.length; i++) // Does everything until 'end 1' for every item in the database
