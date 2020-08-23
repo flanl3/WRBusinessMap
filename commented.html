@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title></title>  
+    
+    <!-- This section is where all the libraries are imported. -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""/>
+    <script type="text/javascript"></script> <!-- JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+      crossorigin=""></script> <!-- Leaflet, a library to display and edit the map -->
+    <script src="https://d3js.org/d3.v5.min.js"></script> <!-- d3, a library for unpacking the .csv file -->
+    <script src="https://mutsuyuki.github.io/Leaflet.SmoothWheelZoom/SmoothWheelZoom.js"></script> <!-- Leaflet.SmoothVheelZoom, a mod to make Leaflet zooming less jumpy -->
+    <script src="http://ismyrnow.github.io/leaflet-groupedlayercontrol/src/leaflet.groupedlayercontrol.js"></script> <!-- Leaflet.GroupedLayerControl, a mod to allow the grouping of layers in the control panel -->
+    <link rel="stylesheet" href="http://ismyrnow.github.io/leaflet-groupedlayercontrol/src/leaflet.groupedlayercontrol.css">
+    
+    <!-- This is where the map size is changed. -->
+    <style>
+      #mapid {
+        height: 600px;
+        width: 800px;
+      }
+    </style>
+</head>
+<body>
+
+<div id="mapid"></div>
+
+<script>
+
+  // This is where the map frame is created and settings are applied
+  var mymap = L.map('mapid',
+  {
+    scrollWheelZoom: false,
+    smoothWheelZoom: true,
+    smoothSensitivity: 2,
+  })
+  .setView([39.775, -105.085], 14);
+
+  mymap.scrollWheelZoom = true;
+
+  // The tiles (ie, the mapbox style) are added to the map frame here
+  L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', 
+  {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>', // Map data copyright attribution
+    maxZoom: 22, // Maximum zoom limit
+    minZoom: 10, // Minimum zoom limit
+    id: 'kateerickson12/ckcz8mszl0cam1klbnixvlv29', // url on Mapbox the tiles are gotten from
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1Ijoia2F0ZWVyaWNrc29uMTIiLCJhIjoiY2tiNnl6cGUyMDBvOTJya2NidnZyOXE3NyJ9.9i41hYKRsTmCb_IoNRA6ng' // generated at https://account.mapbox.com
+  })
+  .addTo(mymap);
+
+  //Creates an array to later put all the markers in
+  var pinpoints = [];
+
+  // Creates a bunch of arrays to later store each category of pin marker
+  var auto = []; // Automotive
+  var chu = []; // Churches
+  var cof = []; // Coffee Shops
+  var ent = []; // Entertainment
+  var groc = []; // Grocery Stores 
+  var hosp = []; // Hospitals
+  var liq = []; // Liquor Stores
+  var rest = []; // Restaurants
+  var resb = []; // Restaurants/Brewpubs
+  var ret = []; // Retail
+  var anim = []; // Animal Services
+  var fit = []; // Fitness
+  var heal = []; // Health Services
+  var laun = []; // Laundromats
+  var med = []; // Media Services
+  var medl = []; // Medical Services
+  var pre = []; // Preschools
+  var prof = []; // Professional Services
+  var sal = []; // Salons
+  var sale = []; // For Sale
+  var lea = []; // For Lease
+  var sub = []; // For Sublease
+
+  // Creates two arrays with corresponding data: 'a' lists each category array, and 'c' lists what would be written in  the 'type' field of the database
+  var a = [anim, auto, chu, cof, ent, fit, groc, heal, hosp, laun, liq, med, medl, pre, prof, rest, resb, ret, sal, sale, lea, sub];
+  var c = ["Animal", "Auto", "Church", "Coffee", "Entertainment", "Fitness", "Grocery", "Health", "Hospital", "Laundromat", "Liquor", "Media", "Medical", "Preschool", "Professional", "Restaurant", "Restaurant/Brewpub", "Retail", "Salon", "Sale", "Lease", "Sublease"];
+
+  d3.csv("https://raw.githubusercontent.com/flanl3/igt4uiprqwgfuivadipbvfeipuvb/master/locations.csv") // finds the data csv at the listed location and imports it as an array
+  .then(function(d)
+  {
+    for(var i = 0; i < d.length; i++) // Does everything until 'end 1' for every item in the database
+    {
+      pinpoints[i] = L.marker([d[i].latitude,d[i].longitude]); // Prepares a marker at the Latitude and Longitude from the database
+      pinpoints[i].bindPopup("<b>"+d[i].name+"</b><br>"+d[i].address); // Gives the marker the ability to pop up and adds the information to display
+      for(var j = 0; j < c.length; j++) // Does everything until 'end 2' for every category
+      {
+        if (d[i].type == c[j]) // If the current database item has the same type as is required for the current category as per 'c',
+        {
+          a[j].push(pinpoints[i]); // then add it to the array for that category as pointed to in the corresponding spot in 'a'
+        }
+      } // end 2
+    } // end 1
+  })
+  .then(function()
+  {
+    // Puts all the categories into larger categories
+    var food = {
+      "Coffee Shops": L.layerGroup(cof),
+      "Grocery Stores": L.layerGroup(groc),
+      "Liquor Stores": L.layerGroup(liq),
+      "Restaurants": L.layerGroup(rest),
+      "Brewpubs": L.layerGroup(resb)
+    };
+
+    var services = {
+      "Animal": L.layerGroup(anim),
+      "Fitness": L.layerGroup(fit),
+      "Health": L.layerGroup(heal),
+      "Laundromat": L.layerGroup(laun),
+      "Media": L.layerGroup(med),
+      "Medical": L.layerGroup(medl),
+      "Preschool": L.layerGroup(pre),
+      "Professional": L.layerGroup(prof),
+      "Salon": L.layerGroup(sal)
+    };
+
+    var basic = {
+      "Automotive": L.layerGroup(auto),
+      "Churches": L.layerGroup(chu),
+      "Entertainment": L.layerGroup(ent),
+      "Hospital": L.layerGroup(hosp),
+      "Retail": L.layerGroup(ret)
+    };
+
+    var avail = {
+      "For Sale": L.layerGroup(sale),
+      "For Lease": L.layerGroup(lea),
+      "For Sublease": L.layerGroup(sub)
+    };
+
+    // Puts all the above larger categories into one group and names them
+    var layers =
+    {
+      "Services": services,
+      "Food": food,
+      "Other": basic,
+      "Available": avail
+    };
+
+    // Creates a control panel of the above larger categories
+    var lControl = L.control.groupedLayers(null, layers, {groupCheckboxes: true, collapsed: false});
+
+    // Adds the control panel to the map
+    mymap.addControl(lControl);
+  });
+
+</script>
+
+</body>
+</html>
